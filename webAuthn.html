@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAuthn Demo</title>
+    <script>
+        async function startWebAuthn() {
+            try {
+                // Assuming the relying party (RP) ID and origin are valid.
+                const publicKeyCredentialCreationOptions = {
+                    challenge: new Uint8Array([/* Some random challenge from server */]),
+                    rp: {
+                        name: "markandscribble.com",
+                    },
+                    user: {
+                        id: new TextEncoder().encode("user123"),
+                        name: "user@example.com",
+                        displayName: "User Example"
+                    },
+                    pubKeyCredParams: [
+                        { type: "public-key", alg: -7 }, // ES256 (Elliptic Curve)
+                    ],
+                    authenticatorSelection: {
+                        authenticatorAttachment: "platform", // This suggests Touch ID or Face ID on Mac
+                    },
+                    timeout: 60000,
+                    attestation: "direct"
+                };
+
+                // Create the WebAuthn credential (register)
+                const credential = await navigator.credentials.create({
+                    publicKey: publicKeyCredentialCreationOptions
+                });
+
+                console.log("WebAuthn credential created:", credential);
+            } catch (error) {
+                console.error("WebAuthn error:", error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>WebAuthn Demo</h1>
+    <button onclick="startWebAuthn()">Start WebAuthn Authentication</button>
+</body>
+</html>
